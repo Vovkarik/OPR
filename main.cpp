@@ -8,15 +8,14 @@
 #include <ctime>
 #include <cmath>
 #include <iostream>
-
 ////////////////////////////////////////////////////////////
 //Constants
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
-const double PI = 3.1415927;
-const int CLOCK_CIRCLE_SIZE = 250;
-const int CENTER_CLOCK_CIRCLE_SIZE = 10;
-const int CLOCK_CIRCLE_THICKNESS = 2;
+const unsigned SCREEN_WIDTH = 800;
+const unsigned SCREEN_HEIGHT = 600;
+const float PI = 3.1415927f;
+const float CLOCK_CIRCLE_SIZE = 250;
+const float CENTER_CLOCK_CIRCLE_SIZE = 10;
+const float CLOCK_CIRCLE_THICKNESS = 2;
 const unsigned DOTS_NUMBER = 60;
 const unsigned NUMBER_OF_DIGITS = 12;
 ////////////////////////////////////////////////////////////
@@ -60,7 +59,7 @@ sf::Vector2f GetPosition(float angle, int offset)
 void CreateDot(int i, sf::CircleShape dot[DOTS_NUMBER], const sf::Vector2f &windowCenter, sf::Vector2f &coordinates, float angle)
 {
 	sf::Vector2f dotPosition = GetPosition(angle, 10);
-	dot[i].setFillColor(sf::Color::Black);
+	dot[i].setFillColor(sf::Color::Green);
 	dot[i].setOrigin(dot[i].getGlobalBounds().width / 2, dot[i].getGlobalBounds().height / 2);
 	dot[i].setPosition(coordinates.x + windowCenter.x, coordinates.y + windowCenter.y);
 }
@@ -69,7 +68,7 @@ void CreateDigit(int i, Clocks &clock, float angle, const sf::Vector2f &windowCe
 {
 	int digit = i / 5;
 	clock.Mechanics.number[digit].setFont(clock.View.font);
-	clock.Mechanics.number[digit].setFillColor(sf::Color::Black);
+	clock.Mechanics.number[digit].setFillColor(sf::Color::Green);
 	clock.Mechanics.number[digit].setStyle(sf::Text::Bold);
 	clock.Mechanics.number[digit].setString(std::to_string(digit + 1));
 	clock.Mechanics.number[digit].setCharacterSize(38);
@@ -84,7 +83,9 @@ void CreateDigit(int i, Clocks &clock, float angle, const sf::Vector2f &windowCe
 
 void CreateClocksForeground(Clocks &clocks, const sf::Vector2f &windowCenter)
 {
-	float angle = -1.047f, x = 0, y = 0;
+	float angle = -1.047f;
+	float x = 0;
+	float y = 0;
 	const float RADIUS_BIG_DOT = 7;
 	for (int i = 0; i < DOTS_NUMBER; i++)
 	{
@@ -107,7 +108,7 @@ void CreateClocksForeground(Clocks &clocks, const sf::Vector2f &windowCenter)
 
 bool LoadResources(Clocks &clock)
 {
-	if (!clock.View.image.loadFromFile("resources/clock-image.jpg"))
+	if (!clock.View.image.loadFromFile("resources/clock-image2.png"))
 	{
 		std::cout << "Clock image not found";
 		return false;
@@ -222,9 +223,9 @@ void HandleIvents(sf::RenderWindow &window)
 
 void SetRotation(Clocks &clocks, tm *ptm)
 {
-	clocks.Hands.hourHand.setRotation(ptm->tm_hour * 30 + (ptm->tm_min / 2));
-	clocks.Hands.minuteHand.setRotation(ptm->tm_min * 6 + (ptm->tm_sec / 12));
-	clocks.Hands.secondsHand.setRotation(ptm->tm_sec * 6);
+	clocks.Hands.hourHand.setRotation(ptm->tm_hour * 30.0f + (ptm->tm_min / 2.0f));
+	clocks.Hands.minuteHand.setRotation(ptm->tm_min * 6.0f + (ptm->tm_sec / 12.0f));
+	clocks.Hands.secondsHand.setRotation(ptm->tm_sec * 6.0f);
 }
 
 void DrawAllParts(Clocks &clocks, sf::RenderWindow &window)
@@ -270,8 +271,6 @@ void MainLoop(Clocks &clocks, sf::RenderWindow &window)
 int main()
 {
 	// Define some variables
-	double x;
-	double y;
 	float angle = 0.0;
 	Clocks clocks;
 	// Set multisampling level
