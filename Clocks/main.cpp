@@ -108,7 +108,7 @@ void CreateClocksForeground(Clocks &clocks, const sf::Vector2f &windowCenter)
 
 bool LoadResources(Clocks &clock)
 {
-	if (!clock.View.image.loadFromFile("resources/clock-image2.png"))
+	if (!clock.View.image.loadFromFile("resources/clock-image3.jpg"))
 	{
 		std::cout << "Clock image not found";
 		return false;
