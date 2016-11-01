@@ -1,8 +1,11 @@
 ﻿////////////////////////////////////////////////////////////
 // Headers:
 // ctime for getting system time and
-// cmath for sin and cos functions
+// cmath for sin and cos functions and M_PI
 ////////////////////////////////////////////////////////////
+#define _USE_MATH_DEFINES
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <ctime>
@@ -12,7 +15,6 @@
 //Constants
 const unsigned SCREEN_WIDTH = 800;
 const unsigned SCREEN_HEIGHT = 600;
-const float PI = 3.1415927f;
 const float CLOCK_CIRCLE_SIZE = 250;
 const float CENTER_CLOCK_CIRCLE_SIZE = 10;
 const float CLOCK_CIRCLE_THICKNESS = 2;
@@ -31,8 +33,6 @@ struct Clocks
 	{
 		sf::Texture image;
 		sf::Music sound;
-		//sf::Texture brand;
-		//sf::Sprite brandSprite;
 		sf::Font font;
 	} View;
 	struct Mechanics
@@ -83,15 +83,13 @@ void CreateDigit(int i, Clocks &clock, float angle, const sf::Vector2f &windowCe
 
 void CreateClocksForeground(Clocks &clocks, const sf::Vector2f &windowCenter)
 {
-	float angle = -1.047f;
-	float x = 0;
-	float y = 0;
+	float angle = (float)(-M_PI/3);
 	const float RADIUS_BIG_DOT = 7;
 	for (int i = 0; i < DOTS_NUMBER; i++)
 	{
-		x = (CLOCK_CIRCLE_SIZE - 10) * cos(angle);
-		y = (CLOCK_CIRCLE_SIZE - 10) * sin(angle);
-
+		sf::Vector2f coordinates;
+		coordinates.x = (CLOCK_CIRCLE_SIZE - 10) * cos(angle);
+		coordinates.y = (CLOCK_CIRCLE_SIZE - 10) * sin(angle);
 		if (i % 5 == 0)
 		{
 			clocks.Mechanics.dot[i] = sf::CircleShape(3);
@@ -101,8 +99,8 @@ void CreateClocksForeground(Clocks &clocks, const sf::Vector2f &windowCenter)
 		{
 			clocks.Mechanics.dot[i] = sf::CircleShape(1);
 		}
-		CreateDot(i, clocks.Mechanics.dot, windowCenter, sf::Vector2f(x,y), angle);
-		angle = angle + ((2 * PI) / DOTS_NUMBER);
+		CreateDot(i, clocks.Mechanics.dot, windowCenter, coordinates, angle);
+		angle = (float)(angle + ((2 * M_PI) / DOTS_NUMBER));
 	}
 }
 
@@ -123,11 +121,6 @@ bool LoadResources(Clocks &clock)
 		std::cout << "Clock sound not found";
 		return false;
 	}
-	/*if (!clock.View.brand.loadFromFile("resources/clock-brand.png")))
-	{
-		std::cout << "Clock brand not found";
-		return false;
-	}*/
 	return true;
 }
 
@@ -169,14 +162,6 @@ void CreateCenterCircle(Clocks &clocks, const sf::Vector2f &windowCenter)
 	clocks.Mechanics.centerCircle.setPosition(windowCenter);
 }
 
-/*void Createbrand(Clocks &clocks, const sf::Vector2f &windowCenter)
-{
-	clocks.View.brandSprite.setTexture(clocks.View.brand);
-	clocks.View.brandSprite.setOrigin(clocks.View.brandSprite.getTextureRect().left + clocks.View.brandSprite.getTextureRect().width / 2.0f,
-	clocks.View.brandSprite.getTextureRect().top + clocks.View.brandSprite.getTextureRect().height);
-	clocks.View.brandSprite.setPosition(windowCenter.x, windowCenter.y * 2 - 150);
-}*/
-
 void PlaySound(Clocks &clocks)
 {
 
@@ -205,8 +190,6 @@ void Preparation(Clocks &clocks, const sf::Vector2f &windowCenter)
 	CreateCenterCircle(clocks, windowCenter);
 	// Create hour, minute, and seconds hands
 	CreateHands(clocks, windowCenter);
-	// Create Clock Brand 
-	//Createbrand(clocks, windowCenter);
 }
 
 void HandleIvents(sf::RenderWindow &window)
@@ -271,11 +254,10 @@ void MainLoop(Clocks &clocks, sf::RenderWindow &window)
 int main()
 {
 	// Define some variables
-	float angle = 0.0;
 	Clocks clocks;
 	// Set multisampling level
 	sf::ContextSettings settings;
-	settings.antialiasingLevel = 8;
+	settings.antialiasingLevel = 4;
 
 	// Create the window of the application
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML Analog Clock", sf::Style::Close, settings);
